@@ -3,8 +3,10 @@ using System;
 using System.Net.Http;
 using System.Net.Http.Headers;
 using System.Net.Http.Json;
+using static System.Net.HttpStatusCode;
 using System.Threading.Tasks;
 using System.Collections.Generic;
+using System.Net;
 
 
 string BASE_POKEMON_ADDRESS = "https://pokeapi.co/api/v2/pokemon";
@@ -34,33 +36,89 @@ while (command != "q")
             {
                 Console.WriteLine("Pokemon name was null. Try again!");
                 break;
-            }            
-            Creature pokemon = await getPokemon(pokemonName);
-            if (pokemon is null)
+            }
+            HttpResponseMessage? pokemonResponse;
+            try
             {
-                Console.WriteLine($"No Pokemon with name: {pokemonName}");
+                pokemonResponse = await getPokemonResponse(pokemonName);
+            }
+            catch (Exception e)
+            {
+                Console.WriteLine($"Exception occured while getting pokemon {pokemonName}");
+                Console.Write(e.StackTrace);
+                continue;
+            }
+            if (!pokemonResponse.IsSuccessStatusCode)
+            {
+                Console.WriteLine($"Could not find pokemon with name: {pokemonName}. Try again!");
+                continue;
             }
             else
             {
 
-                Console.WriteLine($"{pokemon.Name}, I choose you!");
-                if (command == "t")
+                try
                 {
-                    Console.WriteLine($"{pokemon.Name} has type(s) {pokemon.getTypeString()}");
-                    Dictionary<PokemonType.Type, DamageRelations> typeRelations = new Dictionary<PokemonType.Type, DamageRelations>();
-                    foreach (PokemonType pokemonType in pokemon.Types)
+
+                    Creature? pokemon = await pokemonResponse.Content.ReadFromJsonAsync<Creature>();
+                    if (pokemon is null)
                     {
-                        TypeResponse response = await getDamageRelations(pokemonType.type.Name);
-                        typeRelations.Add(pokemonType.type, response.damage_relations);
+                        Console.WriteLine("Could not derive Creature object from JSON response below:");
+                        Console.Write(pokemonResponse.Content);
+                        continue;
+
                     }
-                    pokemon.damageRelationsMap = typeRelations;
-                    pokemon.printTypeSummaries();
-                    pokemon.printDamageRelations();
+                    Console.WriteLine($"{pokemon.Name}, I choose you!");
+                    if (command == "t")
+                    {
+                        Console.WriteLine($"{pokemon.Name} has type(s) {pokemon.getTypeString()}");
+                        Dictionary<PokemonType.Type, DamageRelations> typeRelations = new Dictionary<PokemonType.Type, DamageRelations>();
+                        foreach (PokemonType pokemonType in pokemon.Types)
+                        {
+
+                            string typeName = pokemonType.type.Name;
+
+                            HttpResponseMessage? damageResponse;
+                            try
+                            {
+                                damageResponse = await getDamageRelationsResponse(typeName);
+                                if (!damageResponse.IsSuccessStatusCode)
+                                {
+                                    Console.WriteLine($"Could not find damage type: {typeName}. Try again!");
+                                    continue;
+
+                                }
+                                TypeResponse? response = await damageResponse.Content.ReadFromJsonAsync<TypeResponse>();
+                                if (response is null)
+                                {
+                                    Console.WriteLine("Could not derive TypeResponse object from JSON response below:");
+                                    Console.Write(pokemonResponse.Content);
+                                    continue;
+                                }
+
+
+                                typeRelations.Add(pokemonType.type, response.damage_relations);
+                            }
+                            catch (Exception e)
+                            {
+                                Console.WriteLine($"Exception occured while getting pokemon {typeName}");
+                                Console.Write(e.StackTrace);
+                                continue;
+                            }
+
+                        }
+                        pokemon.damageRelationsMap = typeRelations;
+                        pokemon.printTypeSummaries();
+                        pokemon.printDamageRelations();
+                    }
+                }
+                catch (OperationCanceledException e)
+                {
+                    Console.Write(e.StackTrace);
+                    Console.WriteLine("Operation cancelled while trying to derive creature object. Try again!");
+
+
                 }
             }
-
-
-
         }
         else if (command == "q")
         {
@@ -69,42 +127,27 @@ while (command != "q")
         }
     }
 }
-async Task<TypeResponse> getDamageRelations(string p_Name)
+
+async Task<HttpResponseMessage> getDamageRelationsResponse(string p_Name)
 {
-    TypeResponse? result = null;
     client.DefaultRequestHeaders.Accept.Clear();
     client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
     string url = $"{BASE_TYPE_ADDRESS}/{p_Name}/";
-    HttpResponseMessage response = await client.GetAsync(url);
-    if (response.IsSuccessStatusCode)
-    {
+    return await client.GetAsync(url);
 
-        result = await response.Content.ReadFromJsonAsync<TypeResponse>();
 
-    }
-    return result;
+
 }
 
-async Task<Creature> getPokemon(string p_Name)
+async Task<HttpResponseMessage> getPokemonResponse(string p_Name)
 {
-    Creature? result = null;
     client.DefaultRequestHeaders.Accept.Clear();
     client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
     string url = $"{BASE_POKEMON_ADDRESS}/{p_Name}/";
-    HttpResponseMessage response = await client.GetAsync(url);
-    if (response.IsSuccessStatusCode)
-    {
-
-        result = await response.Content.ReadFromJsonAsync<Creature>();
-
-    }
-    return result;
-
+    return await client.GetAsync(url);
 }
-
-
 
 string getCommand()
 {
@@ -114,7 +157,7 @@ string getCommand()
     Console.WriteLine("q: quit");
     Console.Write("Choice: ");
     string? command = Console.ReadLine();
-    if(command is null)
+    if (command is null)
     {
         return "";
     }
