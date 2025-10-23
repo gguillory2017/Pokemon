@@ -3,33 +3,33 @@ public class Creature
 {
 
 
-    public string name { get; set; }
-    public List<PokemonType> types { get; set; }
+    public required string Name { get; set; }
+    public required List<PokemonType>  Types { get; set; }
 
     public Dictionary<PokemonType.Type, DamageRelations> damageRelationsMap { get; set; }
 
     public String getTypeString()
     {
-        return String.Join(", ", types.Select(t => t.type.name.ToUpper()));
+        return String.Join(", ", Types.Select(p => p.type.Name.ToUpper()));
     }
 
     public void printDamageRelations()
     {
         foreach (var relation in damageRelationsMap)
         {
-            Console.WriteLine($"Damage relations for type: {relation.Key.name.ToUpper()}");
+            Console.WriteLine($"Damage relations for type: {relation.Key.Name.ToUpper()}");
             DamageRelations damage_relations = relation.Value;
             Console.WriteLine("DAMAGE DEALT");
             Console.WriteLine("----------------------------");
-            Console.WriteLine($"No damage to: {String.Join(", ", damage_relations.no_damage_to.Select(t => t.name))}");
-            Console.WriteLine($"Half damage to: {String.Join(", ", damage_relations.half_damage_to.Select(t => t.name))}");
-            Console.WriteLine($"Double damage to: {String.Join(", ", damage_relations.double_damage_to.Select(t => t.name))}");
+            Console.WriteLine($"No damage to: {String.Join(", ", damage_relations.no_damage_to.Select(t => t.Name))}");
+            Console.WriteLine($"Half damage to: {String.Join(", ", damage_relations.half_damage_to.Select(t => t.Name))}");
+            Console.WriteLine($"Double damage to: {String.Join(", ", damage_relations.double_damage_to.Select(t => t.Name))}");
             Console.WriteLine("");
             Console.WriteLine("DAMAGE TAKEN");
             Console.WriteLine("----------------------------");
-            Console.WriteLine($"No damage from: {String.Join(", ", damage_relations.no_damage_from.Select(t => t.name))}");
-            Console.WriteLine($"Half damage from: {String.Join(", ", damage_relations.half_damage_from.Select(t => t.name))}");
-            Console.WriteLine($"Double damage from: {String.Join(", ", damage_relations.double_damage_from.Select(t => t.name))}");
+            Console.WriteLine($"No damage from: {String.Join(", ", damage_relations.no_damage_from.Select(t => t.Name))}");
+            Console.WriteLine($"Half damage from: {String.Join(", ", damage_relations.half_damage_from.Select(t => t.Name))}");
+            Console.WriteLine($"Double damage from: {String.Join(", ", damage_relations.double_damage_from.Select(t => t.Name))}");
             Console.WriteLine("");
         }
 
@@ -53,9 +53,9 @@ public class Creature
         weakTo.ExceptWith(neutral);
         strongTo.ExceptWith(neutral);
        
-        Console.WriteLine($"{this.name} is weak to {String.Join(", ", weakTo.Select(t => t.name))}");
-        Console.WriteLine($"{this.name} is strong to {String.Join(", ", strongTo.Select(t => t.name))}");
-        Console.WriteLine($"{this.name} is neutral to {String.Join(", ", neutral.Select(t => t.name))}");
+        Console.WriteLine($"{this.Name} is weak to {String.Join(", ", weakTo.Select(t => t.Name))}");
+        Console.WriteLine($"{this.Name} is strong to {String.Join(", ", strongTo.Select(t => t.Name))}");
+        Console.WriteLine($"{this.Name} is neutral to {String.Join(", ", neutral.Select(t => t.Name))}");
 
     }
 

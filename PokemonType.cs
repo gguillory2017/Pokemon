@@ -13,12 +13,12 @@ public class PokemonType
     
     public record Type
     {
-        public string name { get; set; }
-        public string url { get; set; }
+        public required string Name { get; set; }
+        public required string Url { get; set; }
 
     }
 
-    public Type type { get; set; }
-    public int slot { get; set; }
+    public required Type type { get; set; }
+    public int Slot { get; set; }
 
 }
