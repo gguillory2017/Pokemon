@@ -31,6 +31,10 @@ while (command != "q")
             Console.Write("Enter pokemon name: ");
             string? pokemonName = Console.ReadLine();
             if (pokemonName is null)
+            {
+                Console.WriteLine("Pokemon name was null. Try again!");
+                break;
+            }            
             Creature pokemon = await getPokemon(pokemonName);
             if (pokemon is null)
             {
@@ -39,14 +43,11 @@ while (command != "q")
             else
             {
 
-                Console.WriteLine($"{pokemon.name}, I choose you!");
                 Console.WriteLine($"{pokemon.Name}, I choose you!");
                 if (command == "t")
                 {
-                    Console.WriteLine($"{pokemon.name} has type(s) {pokemon.getTypeString()}");
                     Console.WriteLine($"{pokemon.Name} has type(s) {pokemon.getTypeString()}");
                     Dictionary<PokemonType.Type, DamageRelations> typeRelations = new Dictionary<PokemonType.Type, DamageRelations>();
-                    foreach (PokemonType pokemonType in pokemon.types)
                     foreach (PokemonType pokemonType in pokemon.Types)
                     {
                         TypeResponse response = await getDamageRelations(pokemonType.type.name);
