@@ -50,7 +50,7 @@ while (command != "q")
                     Dictionary<PokemonType.Type, DamageRelations> typeRelations = new Dictionary<PokemonType.Type, DamageRelations>();
                     foreach (PokemonType pokemonType in pokemon.Types)
                     {
-                        TypeResponse response = await getDamageRelations(pokemonType.type.name);
+                        TypeResponse response = await getDamageRelations(pokemonType.type.Name);
                         typeRelations.Add(pokemonType.type, response.damage_relations);
                     }
                     pokemon.damageRelationsMap = typeRelations;
@@ -71,7 +71,6 @@ while (command != "q")
 }
 async Task<TypeResponse> getDamageRelations(string p_Name)
 {
-    TypeResponse result = null;
     TypeResponse? result = null;
     client.DefaultRequestHeaders.Accept.Clear();
     client.DefaultRequestHeaders.Accept.Add(
@@ -89,7 +88,7 @@ async Task<TypeResponse> getDamageRelations(string p_Name)
 
 async Task<Creature> getPokemon(string p_Name)
 {
-    Creature result = null;
+    Creature? result = null;
     client.DefaultRequestHeaders.Accept.Clear();
     client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
@@ -115,6 +114,7 @@ string getCommand()
     Console.WriteLine("q: quit");
     Console.Write("Choice: ");
     string? command = Console.ReadLine();
+    if(command is null)
     {
         return "";
     }
