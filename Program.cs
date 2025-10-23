@@ -30,6 +30,7 @@ while (command != "q")
         {
             Console.Write("Enter pokemon name: ");
             string? pokemonName = Console.ReadLine();
+            if (pokemonName is null)
             Creature pokemon = await getPokemon(pokemonName);
             if (pokemon is null)
             {
@@ -39,11 +40,14 @@ while (command != "q")
             {
 
                 Console.WriteLine($"{pokemon.name}, I choose you!");
+                Console.WriteLine($"{pokemon.Name}, I choose you!");
                 if (command == "t")
                 {
                     Console.WriteLine($"{pokemon.name} has type(s) {pokemon.getTypeString()}");
+                    Console.WriteLine($"{pokemon.Name} has type(s) {pokemon.getTypeString()}");
                     Dictionary<PokemonType.Type, DamageRelations> typeRelations = new Dictionary<PokemonType.Type, DamageRelations>();
                     foreach (PokemonType pokemonType in pokemon.types)
+                    foreach (PokemonType pokemonType in pokemon.Types)
                     {
                         TypeResponse response = await getDamageRelations(pokemonType.type.name);
                         typeRelations.Add(pokemonType.type, response.damage_relations);
@@ -67,6 +71,7 @@ while (command != "q")
 async Task<TypeResponse> getDamageRelations(string p_Name)
 {
     TypeResponse result = null;
+    TypeResponse? result = null;
     client.DefaultRequestHeaders.Accept.Clear();
     client.DefaultRequestHeaders.Accept.Add(
                 new MediaTypeWithQualityHeaderValue("application/json"));
@@ -109,6 +114,9 @@ string getCommand()
     Console.WriteLine("q: quit");
     Console.Write("Choice: ");
     string? command = Console.ReadLine();
+    {
+        return "";
+    }
     return command;
 }
 
