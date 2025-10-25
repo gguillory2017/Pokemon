@@ -1,8 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
-  <ItemGroup>
-    <ProjectReference Include="PokemonTest\PokemonTest.csproj" />
-  </ItemGroup>
+
 
   <PropertyGroup>
     <OutputType>Exe</OutputType>
