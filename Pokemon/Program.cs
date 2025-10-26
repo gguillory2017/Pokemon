@@ -113,9 +113,8 @@ namespace Pokemon
                                         }
 
                                     }
-                                    pokemon.damageRelationsMap = typeRelations;
+                                    pokemon.setDamageRelationsMap(typeRelations);
                                     pokemon.printTypeSummaries();
-                                    pokemon.printDamageRelations();
                                 }
                             }
                             catch (OperationCanceledException e)
@@ -138,7 +137,7 @@ namespace Pokemon
 
 
         }
-        static async Task<HttpResponseMessage> getDamageRelationsResponse(string p_Name)
+        public static async Task<HttpResponseMessage> getDamageRelationsResponse(string p_Name)
         {
             client.DefaultRequestHeaders.Accept.Clear();
             client.DefaultRequestHeaders.Accept.Add(
