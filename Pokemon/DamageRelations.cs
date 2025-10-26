@@ -1,3 +1,4 @@
+//Describes the special damage relations for a given type. Used with JSON serialization
 public class DamageRelations
 {
     public required List<PokemonType.Type> no_damage_to { get; set; }

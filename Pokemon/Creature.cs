@@ -1,19 +1,26 @@
 
 using System.Dynamic;
 
+//Stores information about a specific pokemon
 public class Creature
 {
 
-
+    //Pokemon name
     public required string Name { get; set; }
+
+    //Pokemon types
     public required List<PokemonType> Types { get; set; }
 
+    //Maps one pokemon type to the other types it has abnormal relationships with 
     public Dictionary<PokemonType.Type, DamageRelations> damageRelationsMap;
 
+    //Types this Creature is weak to (takes double damage, or deals no/half damage)
     public List<PokemonType.Type> TypesWeakTo { get; set; }
 
+    //Types this Creature is strong against (does double damage, or takes no/half damage)
     public List<PokemonType.Type> TypesStrongTo { get; set; }
 
+    //Types this Creature is neutral to (some combination of the condition above)
     public List<PokemonType.Type> TypesNeutralTo { get; set; }
 
     public String getTypeString()
@@ -28,7 +35,7 @@ public class Creature
         TypesNeutralTo = new List<PokemonType.Type>();
         damageRelationsMap = new Dictionary<PokemonType.Type, DamageRelations>();
     }
-
+    //Set the damage relations map and calculate the strong/weak/neutral types
     public void setDamageRelationsMap(Dictionary<PokemonType.Type, DamageRelations> p_Relations)
     {
         damageRelationsMap = p_Relations;
@@ -60,6 +67,7 @@ public class Creature
         return this.damageRelationsMap;
     }
 
+    //Print all the damage relationships for each of this creatures types
     public void printDamageRelations()
     {
         foreach (var relation in damageRelationsMap)

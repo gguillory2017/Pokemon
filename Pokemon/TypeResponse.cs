@@ -1,3 +1,4 @@
+// Object for serializing the response of the PokeAPI type endpoint
 public class TypeResponse
 {
     public required DamageRelations damage_relations { get; set; }
