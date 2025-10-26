@@ -3,7 +3,7 @@
 using System.Net.Http.Json;
 using Pokemon;
 [TestClass]
-public sealed class Test1
+public sealed class ProgramTest
 {
     [TestMethod]
     public async Task Test_getPokemonResponse()
