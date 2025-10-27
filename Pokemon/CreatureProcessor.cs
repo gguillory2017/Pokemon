@@ -2,38 +2,40 @@ using System.Net.Http.Headers;
 using System.Net.Http.Json;
 using System.Threading.Tasks;
 /*
-This class wasn't used, but it's my attempt to fix one of the problems I see with the project.
-Too much of the application logic related to making the API calls is contained in the "Main" method 
-of the Program.cs class. This makes it harder to test. This class aims to fix that problem, but I
-didn't have time to re-write the unit test, and so it did not get implemented
+Attempts to separate logic for making API calls from logic used for processing commands
 */
 public class CreatureProcessor
 {
 
-    static string BASE_POKEMON_ADDRESS = "https://pokeapi.co/api/v2/pokemon";
+    string BASE_POKEMON_ADDRESS = "https://pokeapi.co/api/v2/pokemon";
 
-    static string BASE_TYPE_ADDRESS = "https://pokeapi.co/api/v2/type";
-    static HttpClient client = new HttpClient();
-    public string Name { get; }
-    public Creature Pokemon { get; }
+    string BASE_TYPE_ADDRESS = "https://pokeapi.co/api/v2/type";
+    HttpClient client = new HttpClient();
+    public string? Name { get; set; }
+    public Creature? Pokemon { get; set; }
 
-    private CreatureProcessor(string p_Name, Creature p_Creature)
+    public Boolean initialized = false;
+
+    public CreatureProcessor()
     {
-        this.Name = p_Name;
-        this.Pokemon = p_Creature;
+
     }
-    public static async Task<CreatureProcessor?> BuildCreatureProcessorAsync(string p_Name)
-    {
 
+    public async Task<Boolean> BuildCreatureProcessorAsync(string p_Name)
+    {
         Creature? creature = await createCreature(p_Name);
         if (creature is null)
         {
-            return null;
+            return false;
         }
-        return new CreatureProcessor(p_Name, creature);
+        this.Name = p_Name;
+        this.Pokemon = creature;
+
+        //return new CreatureProcessor(p_Name, creature);
+        return true;
     }
 
-    private static async Task<Creature?> createCreature(string p_Name)
+    public async Task<Creature?> createCreature(string p_Name)
     {
         Creature? pokemon = null;
         Dictionary<PokemonType.Type, DamageRelations> typeRelations = new Dictionary<PokemonType.Type, DamageRelations>();
@@ -102,11 +104,11 @@ public class CreatureProcessor
             Console.Write(e.StackTrace);
 
         }
-        pokemon.damageRelationsMap = typeRelations;
+        pokemon.setDamageRelationsMap(typeRelations);
         return pokemon;
     }
-
-    private static async Task<HttpResponseMessage> getPokemonResponse(string p_Name)
+    //Method responsible for making the PokeAPI request for pokemon information
+    public async Task<HttpResponseMessage> getPokemonResponse(string p_Name)
     {
         client.DefaultRequestHeaders.Accept.Clear();
         client.DefaultRequestHeaders.Accept.Add(
@@ -115,7 +117,8 @@ public class CreatureProcessor
         return await client.GetAsync(url);
     }
 
-    private static async Task<HttpResponseMessage> getDamageRelationsResponse(string p_Name)
+    //Method responsible for making PokeAPI request for type information
+    public async Task<HttpResponseMessage> getDamageRelationsResponse(string p_Name)
     {
         client.DefaultRequestHeaders.Accept.Clear();
         client.DefaultRequestHeaders.Accept.Add(
