@@ -4,9 +4,9 @@ This application uses API calls to the [PokeAPI](https://pokeapi.co/) to display
 ## Running the application
 With [.NET SDK 9.0.306](https://dotnet.microsoft.com/en-us/download/dotnet/9.0) installed:
 1. Clone this repository
-2. Navigate to the root directory of the repository (it should have the `Pokemon.csproj` file in it) from the command line
+2. Navigate to the `Pokemon\Pokemon` directory of the repository (it should have the `Pokemon.csproj` file in it) from the command line
 3. Run the command `dotnet build`
-4. Double click the `Pokemon\bin\Debug\net9.0\Pokemon.exe` file
+4. Double click the `Pokemon\Pokemon\bin\Debug\net9.0\Pokemon.exe` file
 
 ## Using the application
 - On starting the application, you will be given the following commands to choose from:
